@@ -19,6 +19,7 @@ export function renderMexico(el) {
       players: players.map(p => ({ id: p.id, name: p.name, emoji: p.emoji, color: p.color, lives, out: false })),
       timer: { accumulatedMs: 0, startedAt: null },
       startedAt: nowISO(),
+      currentBet: null,
       log: [],
     };
     store.setCurrentGame(game);
@@ -51,6 +52,15 @@ function board(el, game) {
 
         <p class="sub">Нажмите «−» тому, кто проиграл раунд и теряет жизнь. «+» вернёт по ошибке снятую.</p>
 
+        <div class="card" style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-weight:700">🎯 Ставка раунда</span>
+          <select class="select" id="bet" style="flex:1;min-width:130px">
+            <option value="">— не задана —</option>
+            ${MEXICO_ROLLS.map(v => `<option value="${v}" ${game.currentBet === v ? 'selected' : ''}>${betLabel(v)}</option>`).join('')}
+          </select>
+          <button class="iconbtn" id="bet-reset" aria-label="Новый раунд" title="Новый раунд">↺</button>
+        </div>
+
         <div id="players">${game.players.map(playerCard).join('')}</div>
 
         <div style="margin-top:6px">
@@ -71,20 +81,35 @@ function board(el, game) {
     $('#quit', el).addEventListener('click', quit);
     $('#undo', el).addEventListener('click', undo);
 
+    $('#bet', el).addEventListener('change', e => {
+      game.currentBet = e.target.value ? parseInt(e.target.value, 10) : null;
+      persist();
+    });
+    $('#bet-reset', el).addEventListener('click', () => {
+      game.currentBet = null;
+      sound.play('tap');
+      draw();
+    });
+
     el.querySelectorAll('[data-minus]').forEach(b =>
       b.addEventListener('click', () => changeLife(+b.dataset.minus, -1)));
     el.querySelectorAll('[data-plus]').forEach(b =>
       b.addEventListener('click', () => changeLife(+b.dataset.plus, +1)));
 
     const tray = $('#tray', el);
-    const drawDice = vals => {
-      tray.innerHTML = vals.map(dieHtml).join('');
-      const res = $('#roll-result', el);
-      if (res && vals.length === 2) res.textContent = describeRoll(vals[0], vals[1]);
-    };
-    drawDice([2, 1]);
-    $('#roll-result', el).textContent = '';
-    $('#roll', el).addEventListener('click', () => { sound.play('roll'); rollDice(2, drawDice); });
+    const result = $('#roll-result', el);
+    // старший кубик — слева, младший — справа
+    const paint = vals => { tray.innerHTML = [...vals].sort((a, b) => b - a).map(dieHtml).join(''); };
+    paint([2, 1]);
+    result.textContent = '';
+    $('#roll', el).addEventListener('click', () => {
+      sound.play('roll');
+      result.textContent = '';
+      rollDice(2, (vals, done) => {
+        paint(vals);
+        if (done) result.textContent = describeRoll(Math.max(...vals), Math.min(...vals));
+      });
+    });
   }
 
   function changeLife(index, delta) {
@@ -96,6 +121,9 @@ function board(el, game) {
     pl.lives += delta;
     if (pl.lives <= 0) { pl.lives = 0; pl.out = true; }
     else pl.out = false;
+
+    // потеря жизни завершает раунд — ставка сбрасывается на новый
+    if (delta < 0) game.currentBet = null;
 
     sound.play(delta < 0 ? 'minus' : 'add');
     if (pl.out) toast(`${pl.name} выбывает!`);
@@ -166,6 +194,16 @@ function board(el, game) {
   timer.onTick(() => { const t = $('#timer', el); if (t) t.textContent = fmtDuration(timer.elapsed()); });
   draw();
   return cleanup;
+}
+
+// Все броски Мексики по возрастанию старшинства:
+// обычные (31…65) < дубли (11…66) < Мексика (21).
+const MEXICO_ROLLS = [31, 32, 41, 42, 43, 51, 52, 53, 54, 61, 62, 63, 64, 65, 11, 22, 33, 44, 55, 66, 21];
+
+function betLabel(v) {
+  if (v === 21) return '🌶️ Мексика (21)';
+  const hi = Math.floor(v / 10), lo = v % 10;
+  return hi === lo ? `Дубль ${v}` : String(v);
 }
 
 function describeRoll(a, b) {

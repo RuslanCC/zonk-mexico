@@ -7,6 +7,7 @@ import { GameTimer } from './timer.js';
 import { renderSetup, finishGame, renderWin } from './game-common.js';
 import { checkTurn } from './achievements.js';
 import { rollDice } from './dice.js';
+import { scoreZonkRoll } from './zonk-score.js';
 
 export function renderZonk(el) {
   const existing = store.currentGame;
@@ -76,8 +77,12 @@ function board(el, game) {
           <summary>🎲 Бросить кубики</summary>
           <div class="acc__body">
             <div class="dice-tray" id="tray"></div>
-            <button class="btn btn--block" id="roll">Бросок 6 кубиков</button>
-            <p class="help">Виртуальные кости на случай, если настоящих нет под рукой. Комбинации считаете сами.</p>
+            <div id="roll-result" style="text-align:center;font-weight:800;font-size:1.15rem;min-height:1.3em;margin:6px 0"></div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn--block" id="roll">Бросок 6 кубиков</button>
+              <button class="btn btn--accent" id="apply-roll" hidden style="flex:none">Записать</button>
+            </div>
+            <p class="help">Очки считаются по правилам автоматически. Итог можно записать одной кнопкой.</p>
           </div>
         </details>
       </div>`;
@@ -90,12 +95,27 @@ function board(el, game) {
     $('#undo', el).addEventListener('click', undo);
 
     const tray = $('#tray', el);
-    const drawDice = vals => { tray.innerHTML = vals.map(dieHtml).join(''); };
-    drawDice([1, 2, 3, 4, 5, 6]);
+    const result = $('#roll-result', el);
+    const applyBtn = $('#apply-roll', el);
+    const paint = vals => { tray.innerHTML = vals.map(dieHtml).join(''); };
+    paint([1, 2, 3, 4, 5, 6]);
+
     $('#roll', el).addEventListener('click', () => {
       sound.play('roll');
-      rollDice(6, drawDice);
+      applyBtn.hidden = true;
+      result.textContent = '';
+      rollDice(6, (vals, done) => {
+        paint(vals);
+        if (!done) return;
+        const { score, isZonk } = scoreZonkRoll(vals);
+        result.textContent = isZonk ? '💥 Зонк! очков нет' : `= ${score.toLocaleString('ru-RU')} очков`;
+        result.style.color = isZonk ? 'var(--danger)' : 'var(--accent-2)';
+        applyBtn.hidden = false;
+        applyBtn.textContent = isZonk ? 'Записать Зонк' : `Записать ${score}`;
+        applyBtn.dataset.score = String(score);
+      });
     });
+    applyBtn.addEventListener('click', () => commitTurn(parseInt(applyBtn.dataset.score || '0', 10)));
 
     setTimeout(() => { const f = $('#pts', el); if (f) f.focus(); }, 30);
   }

@@ -1,7 +1,7 @@
 // Service worker: кэширует статику для офлайн-работы.
 // При обновлении файлов поднимите версию — старый кэш очистится.
 
-const CACHE = 'kosti-v1';
+const CACHE = 'kosti-v2';
 
 const ASSETS = [
   './',
@@ -15,6 +15,7 @@ const ASSETS = [
   './js/confetti.js',
   './js/timer.js',
   './js/dice.js',
+  './js/zonk-score.js',
   './js/achievements.js',
   './js/rules.js',
   './js/players.js',

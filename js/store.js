@@ -8,7 +8,7 @@ const DEFAULTS = {
   settings: {
     theme: 'dark',
     sound: true,
-    zonkTarget: 10000,
+    zonkTarget: 4000,
     mexicoLives: 6,
   },
   currentGame: null,

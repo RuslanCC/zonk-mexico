@@ -90,7 +90,7 @@ function renderHome(el) {
         <button class="game-tile game-tile--zonk" data-nav="#/game/zonk">
           <div class="game-tile__emoji">🎲</div>
           <div class="game-tile__name">Зонк</div>
-          <div class="game-tile__desc">Набери 10 000 очков первым</div>
+          <div class="game-tile__desc">Набери ${(store.settings.zonkTarget || 4000).toLocaleString('ru-RU')} очков первым</div>
         </button>
         <button class="game-tile game-tile--mexico" data-nav="#/game/mexico">
           <div class="game-tile__emoji">🌶️</div>
