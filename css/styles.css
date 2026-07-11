@@ -1,0 +1,262 @@
+/* ===== Темы и переменные ===== */
+:root {
+  --radius: 16px;
+  --radius-sm: 10px;
+  --gap: 14px;
+  --maxw: 720px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .18);
+  --accent: #6c5ce7;
+  --accent-2: #00cec9;
+  --danger: #ff6b6b;
+  --gold: #ffd166;
+  --ok: #51cf66;
+}
+
+html[data-theme="dark"] {
+  --bg: #14131c;
+  --bg-2: #1e1c2b;
+  --card: #26243a;
+  --card-2: #302d47;
+  --text: #f2f0ff;
+  --muted: #a39fc4;
+  --border: #3a3757;
+}
+
+html[data-theme="light"] {
+  --bg: #f4f2ff;
+  --bg-2: #ffffff;
+  --card: #ffffff;
+  --card-2: #f0edff;
+  --text: #201d34;
+  --muted: #6c6890;
+  --border: #e2ddf5;
+  --shadow: 0 8px 24px rgba(80, 60, 160, .12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font);
+  background: radial-gradient(1200px 600px at 50% -10%, var(--bg-2), var(--bg)) fixed;
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.4;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ===== Верхняя панель ===== */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  padding-top: calc(12px + env(safe-area-inset-top));
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar__brand {
+  font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--text);
+  display: flex; align-items: center; gap: 6px; margin-right: auto;
+}
+.topbar__back, .topbar__theme {
+  width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--card); color: var(--text); font-size: 1.2rem; cursor: pointer;
+  display: grid; place-items: center; transition: transform .1s;
+}
+.topbar__back { font-size: 1.6rem; line-height: 1; }
+.topbar__back:active, .topbar__theme:active { transform: scale(.92); }
+
+/* ===== Раскладка ===== */
+.app { max-width: var(--maxw); margin: 0 auto; padding: 18px 16px 40px; }
+.screen { animation: fade .25s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+.sub { color: var(--muted); font-size: .95rem; margin-bottom: 18px; }
+.section-title { font-weight: 700; font-size: 1.05rem; margin: 22px 0 10px; }
+
+/* ===== Карточки/кнопки ===== */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);
+}
+.grid { display: grid; gap: var(--gap); }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: inherit; font-size: 1rem; font-weight: 700;
+  padding: 13px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--card-2); color: var(--text); cursor: pointer;
+  transition: transform .08s, filter .15s; user-select: none;
+}
+.btn:active { transform: scale(.97); }
+.btn--primary { background: linear-gradient(135deg, var(--accent), #a29bfe); border: none; color: #fff; }
+.btn--accent { background: linear-gradient(135deg, var(--accent-2), #55efc4); border: none; color: #05302e; }
+.btn--danger { background: transparent; border-color: var(--danger); color: var(--danger); }
+.btn--ghost { background: transparent; }
+.btn--block { width: 100%; }
+.btn--lg { padding: 16px 20px; font-size: 1.1rem; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ===== Главная: выбор игры ===== */
+.game-pick { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+@media (max-width: 520px) { .game-pick { grid-template-columns: 1fr; } }
+.game-tile {
+  position: relative; overflow: hidden; text-align: left; cursor: pointer;
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
+  background: var(--card); color: var(--text); box-shadow: var(--shadow);
+  transition: transform .12s, border-color .15s;
+}
+.game-tile:active { transform: scale(.98); }
+.game-tile__emoji { font-size: 2.4rem; }
+.game-tile__name { font-size: 1.35rem; font-weight: 800; margin-top: 6px; }
+.game-tile__desc { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+.game-tile--zonk { background: linear-gradient(135deg, rgba(108,92,231,.22), transparent); }
+.game-tile--mexico { background: linear-gradient(135deg, rgba(0,206,201,.22), transparent); }
+
+.quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+@media (max-width: 520px) { .quick-links { grid-template-columns: repeat(2, 1fr); } }
+.quick { text-align: center; padding: 14px 6px; font-weight: 700; }
+.quick .ico { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+
+/* ===== Список/строки ===== */
+.row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--card); margin-bottom: 10px;
+}
+.row__main { flex: 1; min-width: 0; }
+.row__title { font-weight: 700; }
+.row__meta { color: var(--muted); font-size: .85rem; }
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 1.3rem; flex: none; color: #fff; font-weight: 800;
+}
+
+.field { display: flex; gap: 10px; margin-bottom: 14px; }
+.input, .select {
+  flex: 1; font-family: inherit; font-size: 1rem; color: var(--text);
+  padding: 13px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--bg-2); width: 100%;
+}
+.input:focus, .select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.label { font-weight: 700; font-size: .9rem; margin-bottom: 6px; display: block; }
+.help { color: var(--muted); font-size: .82rem; margin-top: 4px; }
+
+.iconbtn {
+  width: 38px; height: 38px; flex: none; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--card-2); color: var(--text); cursor: pointer; font-size: 1.05rem;
+}
+.iconbtn--danger { color: var(--danger); }
+
+.empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+.empty .ico { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700;
+  background: var(--card-2); border: 1px solid var(--border);
+}
+.chip--gold { background: rgba(255,209,102,.18); border-color: var(--gold); color: var(--gold); }
+
+/* ===== Табло игры ===== */
+.gamebar {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.timer {
+  font-variant-numeric: tabular-nums; font-weight: 800; font-size: 1.15rem;
+  padding: 8px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--border);
+}
+.pill { padding: 6px 12px; border-radius: 999px; background: var(--card-2); font-weight: 700; font-size: .85rem; border: 1px solid var(--border); }
+
+.player-card {
+  display: flex; align-items: center; gap: 12px; padding: 14px;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--card);
+  margin-bottom: 12px; transition: border-color .2s, box-shadow .2s, transform .1s;
+}
+.player-card--active { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent); }
+.player-card--out { opacity: .5; }
+.player-card__score { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.player-card__name { font-weight: 700; }
+.player-card__meta { color: var(--muted); font-size: .82rem; }
+.player-card__side { margin-left: auto; text-align: right; }
+
+.lives { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.heart { font-size: 1.1rem; filter: grayscale(0); }
+.heart--lost { filter: grayscale(1); opacity: .35; }
+
+.turn-input { display: flex; gap: 10px; margin: 14px 0; }
+.turn-input .input { text-align: center; font-size: 1.3rem; font-weight: 800; }
+
+/* виртуальные кости */
+.dice-tray { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 8px 0; }
+.die {
+  width: 46px; height: 46px; border-radius: 10px; background: #fff; color: #14131c;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+  padding: 6px; box-shadow: var(--shadow);
+}
+.die span { align-self: center; justify-self: center; width: 8px; height: 8px; border-radius: 50%; background: #14131c; }
+.die.rolling { animation: shake .5s ease; }
+@keyframes shake { 0%,100%{transform:none} 25%{transform:translateY(-6px) rotate(-8deg)} 75%{transform:translateY(4px) rotate(8deg)} }
+
+/* ===== Правила (аккордеон) ===== */
+.acc { border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; overflow: hidden; background: var(--card); }
+.acc summary { cursor: pointer; padding: 14px 16px; font-weight: 700; list-style: none; display: flex; align-items: center; gap: 8px; }
+.acc summary::-webkit-details-marker { display: none; }
+.acc summary::after { content: "＋"; margin-left: auto; color: var(--muted); }
+.acc[open] summary::after { content: "－"; }
+.acc__body { padding: 0 16px 16px; color: var(--text); }
+.acc__body ul { padding-left: 18px; margin: 8px 0; }
+.acc__body li { margin: 4px 0; }
+.combo-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+.combo-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+.combo-table td:last-child { text-align: right; font-weight: 800; color: var(--accent-2); white-space: nowrap; }
+
+/* ===== Настройки ===== */
+.setting { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.setting:last-child { border-bottom: none; }
+.setting__main { flex: 1; }
+.switch { position: relative; width: 52px; height: 30px; flex: none; }
+.switch input { display: none; }
+.switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--border); transition: .2s; cursor: pointer; }
+.switch span::after { content: ""; position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: .2s; }
+.switch input:checked + span { background: var(--accent); }
+.switch input:checked + span::after { transform: translateX(22px); }
+
+/* ===== Победный экран ===== */
+.win {
+  text-align: center; padding: 30px 16px;
+}
+.win__cup { font-size: 4rem; animation: pop .5s ease; }
+@keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+.win__name { font-size: 1.8rem; font-weight: 800; margin: 8px 0; }
+
+/* ===== Тосты ===== */
+.toast-root { position: fixed; left: 0; right: 0; bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 60; pointer-events: none; }
+.toast {
+  background: var(--card); color: var(--text); border: 1px solid var(--border);
+  padding: 12px 18px; border-radius: 999px; box-shadow: var(--shadow); font-weight: 700;
+  animation: toastIn .25s ease; max-width: 92vw;
+}
+.toast--gold { border-color: var(--gold); }
+@keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+
+/* достижения-грид */
+.ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.ach { padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--card); text-align: center; }
+.ach--locked { opacity: .4; filter: grayscale(1); }
+.ach .ico { font-size: 1.8rem; }
+.ach__name { font-weight: 700; font-size: .85rem; margin-top: 4px; }
+.ach__desc { color: var(--muted); font-size: .75rem; margin-top: 2px; }
+
+.stat-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+.stat-line:last-child { border-bottom: none; }
+.stat-line b { font-variant-numeric: tabular-nums; }
