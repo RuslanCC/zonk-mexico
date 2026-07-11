@@ -8,24 +8,27 @@ import { renderSetup, finishGame, renderWin } from './game-common.js';
 import { rollDice } from './dice.js';
 
 export function renderMexico(el) {
+  let cleanupBoard = null; // фактическая очистка доски (регистрируется у роутера)
   const existing = store.currentGame;
-  if (existing && existing.game === 'mexico') return board(el, existing);
-
-  renderSetup(el, 'mexico', players => {
-    const lives = store.settings.mexicoLives || 6;
-    const game = {
-      game: 'mexico',
-      startLives: lives,
-      players: players.map(p => ({ id: p.id, name: p.name, emoji: p.emoji, color: p.color, lives, out: false })),
-      timer: { accumulatedMs: 0, startedAt: null },
-      startedAt: nowISO(),
-      currentBet: null,
-      log: [],
-    };
-    store.setCurrentGame(game);
-    board(el, game);
-  });
-  return () => {};
+  if (existing && existing.game === 'mexico') {
+    cleanupBoard = board(el, existing);
+  } else {
+    renderSetup(el, 'mexico', players => {
+      const lives = store.settings.mexicoLives || 6;
+      const game = {
+        game: 'mexico',
+        startLives: lives,
+        players: players.map(p => ({ id: p.id, name: p.name, emoji: p.emoji, color: p.color, lives, out: false })),
+        timer: { accumulatedMs: 0, startedAt: null },
+        startedAt: nowISO(),
+        currentBet: null,
+        log: [],
+      };
+      store.setCurrentGame(game);
+      cleanupBoard = board(el, game);
+    });
+  }
+  return () => { if (cleanupBoard) cleanupBoard(); };
 }
 
 function board(el, game) {
@@ -34,8 +37,9 @@ function board(el, game) {
   persist();
 
   const onHide = () => { timer.pause(); persist(); };
+  const onVis = () => { if (document.hidden) onHide(); };
   window.addEventListener('pagehide', onHide);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) onHide(); });
+  document.addEventListener('visibilitychange', onVis);
 
   function persist() { game.timer = timer.snapshot(); store.setCurrentGame(game); }
 
@@ -186,9 +190,13 @@ function board(el, game) {
       </div>`;
   }
 
+  let cleaned = false;
   function cleanup() {
+    if (cleaned) return;
+    cleaned = true;
     timer.destroy();
     window.removeEventListener('pagehide', onHide);
+    document.removeEventListener('visibilitychange', onVis);
   }
 
   timer.onTick(() => { const t = $('#timer', el); if (t) t.textContent = fmtDuration(timer.elapsed()); });

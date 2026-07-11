@@ -10,23 +10,26 @@ import { rollDice } from './dice.js';
 import { scoreZonkRoll } from './zonk-score.js';
 
 export function renderZonk(el) {
+  let cleanupBoard = null; // фактическая очистка доски (регистрируется у роутера)
   const existing = store.currentGame;
-  if (existing && existing.game === 'zonk') return board(el, existing);
-
-  renderSetup(el, 'zonk', players => {
-    const game = {
-      game: 'zonk',
-      target: store.settings.zonkTarget || 10000,
-      players: players.map(p => ({ id: p.id, name: p.name, emoji: p.emoji, color: p.color, score: 0 })),
-      turnIndex: 0,
-      timer: { accumulatedMs: 0, startedAt: null },
-      startedAt: nowISO(),
-      log: [],
-    };
-    store.setCurrentGame(game);
-    board(el, game);
-  });
-  return () => {};
+  if (existing && existing.game === 'zonk') {
+    cleanupBoard = board(el, existing);
+  } else {
+    renderSetup(el, 'zonk', players => {
+      const game = {
+        game: 'zonk',
+        target: store.settings.zonkTarget || 4000,
+        players: players.map(p => ({ id: p.id, name: p.name, emoji: p.emoji, color: p.color, score: 0 })),
+        turnIndex: 0,
+        timer: { accumulatedMs: 0, startedAt: null },
+        startedAt: nowISO(),
+        log: [],
+      };
+      store.setCurrentGame(game);
+      cleanupBoard = board(el, game);
+    });
+  }
+  return () => { if (cleanupBoard) cleanupBoard(); };
 }
 
 function board(el, game) {
@@ -35,8 +38,9 @@ function board(el, game) {
   persist();
 
   const onHide = () => { timer.pause(); persist(); };
+  const onVis = () => { if (document.hidden) onHide(); };
   window.addEventListener('pagehide', onHide);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) onHide(); });
+  document.addEventListener('visibilitychange', onVis);
 
   function persist() {
     game.timer = timer.snapshot();
@@ -194,9 +198,13 @@ function board(el, game) {
       </div>`;
   }
 
+  let cleaned = false;
   function cleanup() {
+    if (cleaned) return;
+    cleaned = true;
     timer.destroy();
     window.removeEventListener('pagehide', onHide);
+    document.removeEventListener('visibilitychange', onVis);
   }
 
   timer.onTick(() => { const t = $('#timer', el); if (t) t.textContent = fmtDuration(timer.elapsed()); });
