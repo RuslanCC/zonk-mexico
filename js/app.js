@@ -6,6 +6,7 @@ import { sound } from './sound.js';
 import { renderPlayers } from './players.js';
 import { renderZonk } from './zonk.js';
 import { renderMexico } from './mexico.js';
+import { renderPerudo } from './perudo.js';
 import { renderHistory, renderStats } from './history.js';
 import { renderRules } from './rules.js';
 
@@ -35,6 +36,7 @@ const routes = {
   '#/players': renderPlayers,
   '#/game/zonk': renderZonk,
   '#/game/mexico': renderMexico,
+  '#/game/perudo': renderPerudo,
   '#/history': renderHistory,
   '#/stats': renderStats,
   '#/rules': renderRules,
@@ -74,7 +76,7 @@ document.addEventListener('pointerdown', () => sound.unlock(), { once: true });
 // ---------- Главная ----------
 function renderHome(el) {
   const cg = store.currentGame;
-  const cgMeta = cg && { zonk: { emoji: '🎲', name: 'Зонк' }, mexico: { emoji: '🌶️', name: 'Мексика' } }[cg.game];
+  const cgMeta = cg && { zonk: { emoji: '🎲', name: 'Зонк' }, mexico: { emoji: '🌶️', name: 'Мексика' }, perudo: { emoji: '🎭', name: 'Перудо' } }[cg.game];
 
   el.innerHTML = `
     <div class="screen">
@@ -96,6 +98,11 @@ function renderHome(el) {
           <div class="game-tile__emoji">🌶️</div>
           <div class="game-tile__name">Мексика</div>
           <div class="game-tile__desc">Не потеряй все жизни</div>
+        </button>
+        <button class="game-tile game-tile--perudo" data-nav="#/game/perudo">
+          <div class="game-tile__emoji">🎭</div>
+          <div class="game-tile__name">Перудо</div>
+          <div class="game-tile__desc">Блефуй и не потеряй все кости</div>
         </button>
       </div>
 
@@ -132,7 +139,9 @@ function renderSettings(el) {
         <label class="label">🎲 Цель в Зонке (очки)</label>
         <input class="input" id="set-target" type="number" min="1000" step="500" value="${s.zonkTarget}" style="margin-bottom:14px">
         <label class="label">🌶️ Жизней в Мексике</label>
-        <input class="input" id="set-lives" type="number" min="1" max="12" value="${s.mexicoLives}">
+        <input class="input" id="set-lives" type="number" min="1" max="12" value="${s.mexicoLives}" style="margin-bottom:14px">
+        <label class="label">🎭 Костей в Перудо</label>
+        <input class="input" id="set-dice" type="number" min="1" max="6" value="${s.perudoDice}">
         <p class="help">Применяется к новым партиям.</p>
       </div>
 
@@ -159,6 +168,10 @@ function renderSettings(el) {
   $('#set-lives', el).addEventListener('change', e => {
     const v = Math.min(12, Math.max(1, parseInt(e.target.value, 10) || 6));
     store.setSetting('mexicoLives', v); e.target.value = v;
+  });
+  $('#set-dice', el).addEventListener('change', e => {
+    const v = Math.min(6, Math.max(1, parseInt(e.target.value, 10) || 5));
+    store.setSetting('perudoDice', v); e.target.value = v;
   });
 
   $('#export', el).addEventListener('click', exportData);

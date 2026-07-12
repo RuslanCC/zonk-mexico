@@ -1,7 +1,7 @@
 // Service worker: кэширует статику для офлайн-работы.
 // При обновлении файлов поднимите версию — старый кэш очистится.
 
-const CACHE = 'kosti-v3';
+const CACHE = 'kosti-v4';
 
 const ASSETS = [
   './',
@@ -22,6 +22,7 @@ const ASSETS = [
   './js/game-common.js',
   './js/zonk.js',
   './js/mexico.js',
+  './js/perudo.js',
   './js/history.js',
   './icons/icon.svg',
 ];

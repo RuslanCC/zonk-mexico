@@ -10,6 +10,7 @@ const DEFAULTS = {
     sound: true,
     zonkTarget: 4000,
     mexicoLives: 6,
+    perudoDice: 5,
   },
   currentGame: null,
   history: [],

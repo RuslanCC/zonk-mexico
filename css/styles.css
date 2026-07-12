@@ -118,6 +118,16 @@ body {
 .game-tile__desc { color: var(--muted); font-size: .9rem; margin-top: 4px; }
 .game-tile--zonk { background: linear-gradient(135deg, rgba(108,92,231,.22), transparent); }
 .game-tile--mexico { background: linear-gradient(135deg, rgba(0,206,201,.22), transparent); }
+.game-tile--perudo { background: linear-gradient(135deg, rgba(253,121,168,.22), transparent); }
+
+.face-pick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.face-btn {
+  font-size: 1.7rem; line-height: 1; padding: 8px 0; border-radius: 12px;
+  background: var(--card-2); border: 1px solid var(--border); color: var(--text);
+  cursor: pointer; transition: transform .06s ease;
+}
+.face-btn:active { transform: scale(.94); }
+.face-btn--on { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 16%, var(--card-2)); }
 
 .quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
 @media (max-width: 520px) { .quick-links { grid-template-columns: repeat(2, 1fr); } }

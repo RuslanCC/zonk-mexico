@@ -4,7 +4,7 @@ import { store } from './store.js';
 import { $, avatarHtml, escapeHtml, toast, confirmDialog, fmtDuration, fmtDate, plural } from './ui.js';
 import { ACHIEVEMENTS } from './achievements.js';
 
-const GAME_META = { zonk: { emoji: '🎲', name: 'Зонк' }, mexico: { emoji: '🌶️', name: 'Мексика' } };
+const GAME_META = { zonk: { emoji: '🎲', name: 'Зонк' }, mexico: { emoji: '🌶️', name: 'Мексика' }, perudo: { emoji: '🎭', name: 'Перудо' } };
 
 export function renderHistory(el) {
   function draw() {

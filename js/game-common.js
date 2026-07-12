@@ -10,6 +10,7 @@ import { checkGameEnd } from './achievements.js';
 const META = {
   zonk:   { emoji: '🎲', name: 'Зонк' },
   mexico: { emoji: '🌶️', name: 'Мексика' },
+  perudo: { emoji: '🎭', name: 'Перудо' },
 };
 
 // Экран выбора игроков. onStart(selectedPlayers[]).
