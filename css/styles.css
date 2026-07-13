@@ -204,6 +204,21 @@ body {
 .turn-input { display: flex; gap: 10px; margin: 14px 0; }
 .turn-input .input { text-align: center; font-size: 1.3rem; font-weight: 800; }
 
+/* быстрый набор очков за ход (без цифровой клавиатуры) */
+.pts-row { display: flex; align-items: stretch; gap: 10px; margin: 12px 0 10px; }
+.pts-display {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  min-height: 52px; padding: 6px 12px; border-radius: var(--radius-sm);
+  background: var(--card-2); border: 1px solid var(--border);
+  font-size: 1.7rem; font-weight: 800; color: var(--muted);
+  font-variant-numeric: tabular-nums; transition: color .12s, border-color .12s;
+}
+.pts-display--on { color: var(--text); border-color: var(--accent-2); }
+.pts-clear { flex: none; width: 52px; height: auto; font-size: 1.3rem; }
+.pad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pad-btn { padding: 15px 4px; font-size: 1.05rem; font-weight: 800; }
+@media (max-width: 360px) { .pad-btn { font-size: .95rem; padding: 14px 2px; } }
+
 /* виртуальные кости */
 .dice-tray { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 8px 0; }
 .die {

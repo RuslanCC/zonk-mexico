@@ -226,7 +226,21 @@ router();
 
 // Service worker для офлайна (нужен HTTPS или localhost)
 if ('serviceWorker' in navigator) {
+  // Когда новый воркер забрал контроль — перезагружаем страницу,
+  // чтобы подхватить свежий HTML/JS/CSS (в т.ч. в PWA с домашнего экрана).
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloading) return;
+    reloading = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      // Проверяем обновление при каждом запуске приложения.
+      reg.update();
+      // …и раз в час, пока приложение живёт (важно для долгоживущих PWA).
+      setInterval(() => reg.update(), 60 * 60 * 1000);
+    }).catch(() => {});
   });
 }

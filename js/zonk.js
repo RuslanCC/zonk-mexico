@@ -34,6 +34,8 @@ export function renderZonk(el) {
 
 function board(el, game) {
   const timer = new GameTimer(game.timer);
+  const STEPS = [50, 100, 500, 1000]; // быстрый набор — все очки Зонка кратны 50
+  let pending = 0; // набранные очки за текущий ход (до «Записать»)
   timer.start();
   persist();
 
@@ -67,11 +69,15 @@ function board(el, game) {
             ${avatarHtml(p)}
             <b>Ход: ${escapeHtml(p.name)}</b>
           </div>
-          <div class="turn-input">
-            <input class="input" id="pts" type="number" inputmode="numeric" placeholder="Очки за ход" min="0" step="50" />
-            <button class="btn btn--accent" id="rec">Записать</button>
+          <div class="pts-row">
+            <div class="pts-display" id="pts">0</div>
+            <button class="iconbtn pts-clear" id="clear" aria-label="Сбросить ввод">⌫</button>
           </div>
-          <div style="display:flex;gap:10px">
+          <div class="pad-grid">
+            ${STEPS.map(s => `<button class="btn pad-btn" data-add="${s}">+${s}</button>`).join('')}
+          </div>
+          <button class="btn btn--accent btn--block" id="rec" style="margin-top:10px" disabled>Записать</button>
+          <div style="display:flex;gap:10px;margin-top:10px">
             <button class="btn btn--danger btn--block" id="zonk">💥 Зонк (0)</button>
             <button class="btn btn--ghost" id="undo" ${game.log.length ? '' : 'disabled'} style="flex:none">↩︎ Отменить</button>
           </div>
@@ -94,9 +100,29 @@ function board(el, game) {
     $('#pause', el).addEventListener('click', () => { timer.toggle(); persist(); draw(); });
     $('#quit', el).addEventListener('click', quit);
     $('#rec', el).addEventListener('click', record);
-    $('#pts', el).addEventListener('keydown', e => { if (e.key === 'Enter') record(); });
     $('#zonk', el).addEventListener('click', () => commitTurn(0));
     $('#undo', el).addEventListener('click', undo);
+
+    const ptsEl = $('#pts', el);
+    const recBtn = $('#rec', el);
+    const syncPending = () => {
+      ptsEl.textContent = pending.toLocaleString('ru-RU');
+      ptsEl.classList.toggle('pts-display--on', pending > 0);
+      recBtn.disabled = pending <= 0;
+      recBtn.textContent = pending > 0 ? `Записать ${pending.toLocaleString('ru-RU')}` : 'Записать';
+    };
+    el.querySelectorAll('.pad-btn').forEach(b => b.addEventListener('click', () => {
+      pending += parseInt(b.dataset.add, 10);
+      sound.play('add');
+      syncPending();
+    }));
+    $('#clear', el).addEventListener('click', () => {
+      if (pending === 0) return;
+      pending = 0;
+      sound.play('minus');
+      syncPending();
+    });
+    syncPending();
 
     const tray = $('#tray', el);
     const result = $('#roll-result', el);
@@ -120,18 +146,15 @@ function board(el, game) {
       });
     });
     applyBtn.addEventListener('click', () => commitTurn(parseInt(applyBtn.dataset.score || '0', 10)));
-
-    setTimeout(() => { const f = $('#pts', el); if (f) f.focus(); }, 30);
   }
 
   function record() {
-    const input = $('#pts', el);
-    const val = parseInt(input.value, 10);
-    if (isNaN(val) || val < 0) { toast('Введите очки за ход'); return; }
-    commitTurn(val);
+    if (pending <= 0) { toast('Наберите очки за ход'); return; }
+    commitTurn(pending);
   }
 
   function commitTurn(points) {
+    pending = 0;
     const pl = game.players[game.turnIndex];
     game.log.push({ playerIndex: game.turnIndex, points, prevScore: pl.score });
     pl.score += points;
