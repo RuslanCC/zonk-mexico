@@ -6,6 +6,7 @@ import { sound } from './sound.js';
 import { GameTimer } from './timer.js';
 import { renderSetup, finishGame, renderWin } from './game-common.js';
 import { rollDice } from './dice.js';
+import { gameHelpHtml } from './game-help.js';
 
 export function renderMexico(el) {
   let cleanupBoard = null; // фактическая очистка доски (регистрируется у роутера)
@@ -79,6 +80,8 @@ function board(el, game) {
             <button class="btn btn--block" id="roll">Бросок</button>
           </div>
         </details>
+
+        ${gameHelpHtml('mexico')}
       </div>`;
 
     $('#pause', el).addEventListener('click', () => { timer.toggle(); persist(); draw(); });

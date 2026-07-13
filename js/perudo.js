@@ -7,6 +7,7 @@ import { $, avatarHtml, escapeHtml, toast, fmtDuration, confirmDialog } from './
 import { sound } from './sound.js';
 import { GameTimer } from './timer.js';
 import { renderSetup, finishGame, renderWin } from './game-common.js';
+import { gameHelpHtml } from './game-help.js';
 
 // Юникод-грани кубика по значению 1..6.
 const DICE_FACES = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
@@ -94,6 +95,8 @@ function board(el, game) {
         <div style="margin-top:6px">
           <button class="btn btn--ghost btn--block" id="undo" ${game.log.length ? '' : 'disabled'}>↩︎ Отменить последнее</button>
         </div>
+
+        ${gameHelpHtml('perudo')}
       </div>`;
 
     $('#pause', el).addEventListener('click', () => { timer.toggle(); persist(); draw(); });

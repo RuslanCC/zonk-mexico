@@ -239,6 +239,10 @@ body {
 .acc__body { padding: 0 16px 16px; color: var(--text); }
 .acc__body ul { padding-left: 18px; margin: 8px 0; }
 .acc__body li { margin: 4px 0; }
+.acc--help { border-color: var(--accent); }
+.acc--help > summary { color: var(--accent-2); }
+.acc__body--help { padding-bottom: 6px; }
+.acc__body--help .acc:last-child { margin-bottom: 0; }
 .combo-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
 .combo-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
 .combo-table td:last-child { text-align: right; font-weight: 800; color: var(--accent-2); white-space: nowrap; }

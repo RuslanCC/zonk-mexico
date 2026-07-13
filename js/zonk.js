@@ -8,6 +8,7 @@ import { renderSetup, finishGame, renderWin } from './game-common.js';
 import { checkTurn } from './achievements.js';
 import { rollDice } from './dice.js';
 import { scoreZonkRoll } from './zonk-score.js';
+import { gameHelpHtml } from './game-help.js';
 
 export function renderZonk(el) {
   let cleanupBoard = null; // фактическая очистка доски (регистрируется у роутера)
@@ -95,6 +96,8 @@ function board(el, game) {
             <p class="help">Очки считаются по правилам автоматически. Итог можно записать одной кнопкой.</p>
           </div>
         </details>
+
+        ${gameHelpHtml('zonk')}
       </div>`;
 
     $('#pause', el).addEventListener('click', () => { timer.toggle(); persist(); draw(); });
