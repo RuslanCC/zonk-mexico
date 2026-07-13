@@ -122,7 +122,14 @@ export function renderWin(el, game, winner, durationMs, subtitle) {
       </div>
     </div>`;
   const again = $('[data-again]', el);
-  again.addEventListener('click', () => { location.hash = `#/game/${game}`; });
+  again.addEventListener('click', () => {
+    const target = `#/game/${game}`;
+    // Победный экран показан на том же хэше, что и партия (#/game/…),
+    // поэтому простое присваивание того же значения не вызовет hashchange.
+    // Форсируем перерисовку роутера вручную.
+    if (location.hash === target) window.dispatchEvent(new HashChangeEvent('hashchange'));
+    else location.hash = target;
+  });
 }
 
 export { META };

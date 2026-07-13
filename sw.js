@@ -1,7 +1,7 @@
 // Service worker: кэширует статику для офлайн-работы.
 // При обновлении файлов поднимите версию — старый кэш очистится.
 
-const CACHE = 'kosti-v5';
+const CACHE = 'kosti-v7';
 
 const ASSETS = [
   './',
